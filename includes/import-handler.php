@@ -278,7 +278,7 @@ function jiwu_import_cron_task()
             // address
             // 提取地址信息
             $state   = isset($listing->state) ? strtoupper(trim($listing->state)) : '';
-            $country = isset($listing->country) ? strtoupper(trim($listing->country)) : 'AU'; // 默认澳大利亚
+            $country = isset($listing->country) ? strtoupper(trim($listing->country)) : 'Australia'; // 默认澳大利亚
             $suburb  = isset($listing->suburb) ? trim($listing->suburb) : '';
             $street  = isset($listing->street) ? trim($listing->street) : '';
             $postcode = isset($listing->postcode) ? trim($listing->postcode) : '';
