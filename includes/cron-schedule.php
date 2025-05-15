@@ -6,8 +6,7 @@ function jiwu_import_cron_interval($schedules)
     // 如果未定义 five_minutes 时间表，则添加它
     if (!isset($schedules['five_minutes'])) {
         $schedules['five_minutes'] = array(
-//            'interval' => 300, // 300秒，即5分钟
-            'interval' => 50, // 300秒，即5分钟
+            'interval' => 60, // 300秒，即5分钟
             'display' => __('Every 5 Minutes', 'jiwu-import') // 时间间隔名称
         );
     }

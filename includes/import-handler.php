@@ -3,6 +3,20 @@
 // 定时任务执行函数：查询未导入的房源记录并导入为 Houzez 主题的 Property 帖子
 function jiwu_import_cron_task()
 {
+    // 检查是否已有任务在运行
+    if ( get_transient( 'jiwu_import_cron_lock' ) ) {
+        return; // 有任务在运行，退出
+    }
+
+    // 设置锁，持续时间
+    set_transient( 'jiwu_import_cron_lock', true, 3600*10);
+
+    // 注册关闭函数，在脚本结束时释放锁
+    register_shutdown_function( function() {
+        error_log("delete_transient jiwu_import_cron_lock");
+        delete_transient( 'jiwu_import_cron_lock' );
+    } );
+
     global $wpdb;
     // 构造自定义表名（考虑表前缀）
     $table_name = $wpdb->prefix . 'listings';
@@ -391,12 +405,22 @@ function jiwu_import_cron_task()
 
                     error_log(print_r($result, true));
 
-                    if ( isset( $result['status'] ) && $result['status'] === 'success' && isset( $result['id'] ) ) {
+                    if (
+                        (isset($result['status']) && $result['status'] === 'success' && isset($result['id'])) ||
+                        (isset($result['status']) && $result['status'] === 'error' && isset($result['message']) && $result['message'] === 'Image exists' && isset($result['id']))
+                    ) {
                         $media_ids[] = $result['id'];
                     } else {
                         // 记录错误信息
-                        error_log( 'EXMAGE 添加图片失败: ' . ( $result['message'] ?? '未知错误' ) );
+                        error_log('EXMAGE 添加图片失败: ' . ($result['message'] ?? '未知错误'));
                     }
+
+//                    if ( isset( $result['status'] ) && $result['status'] === 'success' && isset( $result['id'] ) ) {
+//                        $media_ids[] = $result['id'];
+//                    } else {
+//                        // 记录错误信息
+//                        error_log( 'EXMAGE 添加图片失败: ' . ( $result['message'] ?? '未知错误' ) );
+//                    }
                 }
 
                 error_log(print_r($media_ids, true));
@@ -561,11 +585,14 @@ function jiwu_import_cron_task()
 
                                 error_log(print_r($result, true));
 
-                                if ( isset( $result['status'] ) && $result['status'] === 'success' && isset( $result['id'] ) ) {
-                                    set_post_thumbnail($agent_id, $result['id']);
+                                if (
+                                    (isset($result['status']) && $result['status'] === 'success' && isset($result['id'])) ||
+                                    (isset($result['status']) && $result['status'] === 'error' && isset($result['message']) && $result['message'] === 'Image exists' && isset($result['id']))
+                                ) {
+                                    $media_ids[] = $result['id'];
                                 } else {
                                     // 记录错误信息
-                                    error_log( 'EXMAGE 添加图片失败: ' . ( $result['message'] ?? '未知错误' ) );
+                                    error_log('EXMAGE 添加图片失败: ' . ($result['message'] ?? '未知错误'));
                                 }
                             }
                         }
