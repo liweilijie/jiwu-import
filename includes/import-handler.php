@@ -116,18 +116,35 @@ function jiwu_import_cron_task()
             update_post_meta($post_id, '_imported_ref_jiwu', $listing->unique_id);
 
             if ($listing->price_text) {
-                update_post_meta($post_id, 'fave_property_price', $listing->price_text); // 面议
-                update_post_meta($post_id, 'fave_property_price_postfix', '');
-            } else {
-                // 更新价格信息
-                if ($listing->lower_price) {
-                    update_post_meta($post_id, 'fave_property_price', $listing->lower_price);
-                    update_post_meta($post_id, 'fave_property_price_postfix', '');
-                } else {
-                    update_post_meta($post_id, 'fave_property_price', 'Contact Agent'); // 面议
-                    update_post_meta($post_id, 'fave_property_price_postfix', '');
-                }
+                // 设置格式化的价格文本
+                update_post_meta($post_id, 'fave_property-price-text', $listing->price_text);
             }
+
+            if ($listing->lower_price) {
+                // 设置最低价格
+                update_post_meta($post_id, 'fave_property_price', $listing->lower_price);
+            }
+
+            if ($listing-> upper_price) {
+                // 设置最高价格
+                update_post_meta($post_id, 'fave_property-upper-price', $listing->upper_price);
+            }
+            update_post_meta($post_id, 'fave_property_price_postfix', '');
+
+
+//            if ($listing->price_text) {
+//                update_post_meta($post_id, 'fave_property_price', $listing->price_text); // 面议
+//                update_post_meta($post_id, 'fave_property_price_postfix', '');
+//            } else {
+//                // 更新价格信息
+//                if ($listing->lower_price) {
+//                    update_post_meta($post_id, 'fave_property_price', $listing->lower_price);
+//                    update_post_meta($post_id, 'fave_property_price_postfix', '');
+//                } else {
+//                    update_post_meta($post_id, 'fave_property_price', 'Contact Agent'); // 面议
+//                    update_post_meta($post_id, 'fave_property_price_postfix', '');
+//                }
+//            }
 
 
             // TODO: 出租的信息处理待定
